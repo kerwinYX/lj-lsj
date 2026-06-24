@@ -1,0 +1,5 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - heading "班级管理助手" [level=1] [ref=e4]
+  - main [ref=e5]:
+    - paragraph [ref=e8]: 正在加载数据库...

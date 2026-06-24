@@ -1,0 +1,68 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - button "返回" [ref=e47] [cursor=pointer]:
+        - img [ref=e48]
+      - heading "张小明" [level=1] [ref=e88]
+      - generic [ref=e9]:
+        - button "✏️" [ref=e89] [cursor=pointer]
+        - button "🗑️" [ref=e90] [cursor=pointer]
+    - main [ref=e5]:
+      - generic [ref=e91]:
+        - link "班级列表" [ref=e92] [cursor=pointer]:
+          - /url: "#/classes"
+        - generic [ref=e93]: ›
+        - link "2024级1班" [ref=e94] [cursor=pointer]:
+          - /url: "#/class/cls_1782272539704_9pk0"
+        - generic [ref=e95]: ›
+        - generic [ref=e96]: 张小明
+      - generic [ref=e97]:
+        - generic [ref=e99] [cursor=pointer]: 张
+        - heading "张小明" [level=2] [ref=e100]
+        - generic [ref=e102]: 男
+        - paragraph [ref=e103]: 学习认真，性格开朗
+      - generic [ref=e104]:
+        - generic [ref=e105]: 🏷️ 标签
+        - button "✏️" [ref=e106] [cursor=pointer]
+      - generic [ref=e109]: 暂无标签，点击右侧按钮添加
+      - generic [ref=e110]:
+        - generic [ref=e111]: 👨‍👩‍👧‍👦 家庭信息
+        - button "+" [ref=e112] [cursor=pointer]
+      - generic [ref=e115]: 暂无家庭信息
+      - generic [ref=e116]:
+        - button "💬 谈话记录" [active] [ref=e117] [cursor=pointer]
+        - button "📝 添加笔记" [ref=e118] [cursor=pointer]
+        - button "🤖 AI总结" [disabled] [ref=e119]
+      - generic [ref=e120]: 📋 动态记录
+      - generic [ref=e121]:
+        - button "全部" [ref=e122] [cursor=pointer]
+        - button "谈话" [ref=e123] [cursor=pointer]
+        - button "笔记" [ref=e124] [cursor=pointer]
+        - button "标签变更" [ref=e125] [cursor=pointer]
+        - button "信息变更" [ref=e126] [cursor=pointer]
+      - generic [ref=e128]:
+        - generic [ref=e129]: 📋
+        - text: 还没有记录
+        - text: 开始添加谈话记录或笔记吧
+  - generic [ref=e131]:
+    - heading "添加谈话记录" [level=2] [ref=e133]
+    - generic [ref=e135]:
+      - generic [ref=e136]:
+        - generic [ref=e137]: 日期
+        - textbox [ref=e138]: 2026-06-24
+      - generic [ref=e139]:
+        - generic [ref=e140]: 类型
+        - combobox [ref=e141]:
+          - option "学习辅导" [selected]
+          - option "行为纠正"
+          - option "心理疏导"
+          - option "家校沟通"
+          - option "日常交流"
+          - option "表扬鼓励"
+      - generic [ref=e142]:
+        - generic [ref=e143]: 内容
+        - textbox "请输入谈话内容…" [ref=e144]
+      - generic [ref=e145]:
+        - generic [ref=e146]: 追踪事项
+        - textbox "可选，需要后续跟进的事项" [ref=e147]
+      - button "保存" [ref=e148] [cursor=pointer]

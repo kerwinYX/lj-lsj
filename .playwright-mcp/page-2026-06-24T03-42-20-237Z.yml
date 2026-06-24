@@ -1,0 +1,17 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - heading "班级管理助手" [level=1] [ref=e4]
+    - button "⚙" [ref=e30] [cursor=pointer]
+  - main [ref=e5]:
+    - generic [ref=e31]:
+      - img [ref=e32]
+      - textbox "搜索学生姓名..." [ref=e35]
+    - generic [ref=e38] [cursor=pointer]:
+      - heading "2024级1班" [level=3] [ref=e39]
+      - generic [ref=e40]:
+        - generic [ref=e41]: "0"
+        - generic [ref=e42]: 名学生
+      - generic [ref=e43]:
+        - button "✏" [ref=e44]
+        - button "🗑" [ref=e45]
+    - button "+" [ref=e46] [cursor=pointer]

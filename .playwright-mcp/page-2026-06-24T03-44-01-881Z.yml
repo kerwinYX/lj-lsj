@@ -1,0 +1,47 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - button "返回" [ref=e47] [cursor=pointer]:
+      - img [ref=e48]
+    - heading "张小明" [level=1] [ref=e88]
+    - generic [ref=e9]:
+      - button "✏️" [ref=e149] [cursor=pointer]
+      - button "🗑️" [ref=e150] [cursor=pointer]
+  - main [ref=e5]:
+    - generic [ref=e151]:
+      - link "班级列表" [ref=e152] [cursor=pointer]:
+        - /url: "#/classes"
+      - generic [ref=e153]: ›
+      - link "2024级1班" [ref=e154] [cursor=pointer]:
+        - /url: "#/class/cls_1782272539704_9pk0"
+      - generic [ref=e155]: ›
+      - generic [ref=e156]: 张小明
+    - generic [ref=e157]:
+      - generic [ref=e159] [cursor=pointer]: 张
+      - heading "张小明" [level=2] [ref=e160]
+      - generic [ref=e162]: 男
+      - paragraph [ref=e163]: 学习认真，性格开朗
+    - generic [ref=e164]:
+      - generic [ref=e165]: 🏷️ 标签
+      - button "✏️" [ref=e166] [cursor=pointer]
+    - generic [ref=e169]: 暂无标签，点击右侧按钮添加
+    - generic [ref=e170]:
+      - generic [ref=e171]: 👨‍👩‍👧‍👦 家庭信息
+      - button "+" [ref=e172] [cursor=pointer]
+    - generic [ref=e175]: 暂无家庭信息
+    - generic [ref=e176]:
+      - button "💬 谈话记录" [ref=e177] [cursor=pointer]
+      - button "📝 添加笔记" [ref=e178] [cursor=pointer]
+      - button "🤖 AI总结" [disabled] [ref=e179]
+    - generic [ref=e180]: 📋 动态记录
+    - generic [ref=e181]:
+      - button "全部" [ref=e182] [cursor=pointer]
+      - button "谈话" [ref=e183] [cursor=pointer]
+      - button "笔记" [ref=e184] [cursor=pointer]
+      - button "标签变更" [ref=e185] [cursor=pointer]
+      - button "信息变更" [ref=e186] [cursor=pointer]
+    - generic [ref=e190]:
+      - generic [ref=e191]:
+        - generic [ref=e192]: 2026-06-24 11:44
+        - generic [ref=e193]: 💬 谈话·心理疏导
+      - generic [ref=e194]: 学生近期情绪低落，进行了心理疏导，了解到是因为家庭方面的原因。鼓励学生积极面对，并约定下周再次谈话。
+      - generic [ref=e195]: 📌 追踪：下周三再次跟进情绪状态

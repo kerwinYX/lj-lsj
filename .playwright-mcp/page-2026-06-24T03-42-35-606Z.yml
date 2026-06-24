@@ -1,0 +1,17 @@
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - button "返回" [ref=e47] [cursor=pointer]:
+      - img [ref=e48]
+    - heading "2024级1班" [level=1] [ref=e50]
+  - main [ref=e5]:
+    - generic [ref=e51]:
+      - link "首页" [ref=e52] [cursor=pointer]:
+        - /url: "#/classes"
+      - generic [ref=e53]: ›
+      - generic [ref=e54]: 2024级1班
+    - generic [ref=e55]:
+      - generic [ref=e56]: 👤
+      - paragraph [ref=e57]:
+        - text: 这个班级还没有学生
+        - text: 点击右下角按钮添加
+    - button "+" [ref=e58] [cursor=pointer]

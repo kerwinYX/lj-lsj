@@ -1,0 +1,22 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - heading "班级管理助手" [level=1] [ref=e4]
+      - button "⚙" [ref=e10] [cursor=pointer]
+    - main [ref=e5]:
+      - generic [ref=e11]:
+        - img [ref=e12]
+        - textbox "搜索学生姓名..." [ref=e15]
+      - generic [ref=e16]:
+        - generic [ref=e17]: 📚
+        - paragraph [ref=e18]:
+          - text: 还没有班级
+          - text: 点击右下角按钮创建第一个班级
+      - button "+" [active] [ref=e19] [cursor=pointer]
+  - generic [ref=e21]:
+    - heading "新建班级" [level=2] [ref=e23]
+    - generic [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]: 班级名称
+        - textbox "请输入班级名称" [ref=e28]
+      - button "创建" [ref=e29] [cursor=pointer]

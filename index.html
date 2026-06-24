@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#6366F1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+  <title>班级管理助手</title>
+</head>
+<body>
+  <div id="app">
+    <nav id="navbar" class="navbar">
+      <button id="nav-back" class="nav-btn nav-back" style="display:none" aria-label="返回">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <h1 id="nav-title" class="nav-title">班级管理助手</h1>
+      <div id="nav-actions" class="nav-actions"></div>
+    </nav>
+    <main id="main-content" class="main-content">
+      <div id="loading" class="loading-screen">
+        <div class="spinner"></div>
+        <p>正在加载数据库...</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="lib/sql-wasm.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
