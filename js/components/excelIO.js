@@ -78,11 +78,32 @@ export async function exportStudentsToExcel(classId, className) {
   XLSX.utils.book_append_sheet(wb, ws, className || '学生信息');
 
   const fileName = `${className || '学生信息'}_${formatDate(new Date())}.xlsx`;
-  XLSX.writeFile(wb, fileName);
+
+  // Use Web Share API on mobile for better UX
+  if (navigator.share && navigator.canShare) {
+    const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+    const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const file = new File([blob], fileName, { type: blob.type });
+    if (navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: fileName });
+      return { count: rows.length, fileName };
+    }
+  }
+
+  // Fallback: blob download
+  const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+  const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
   return { count: rows.length, fileName };
 }
 
-export function generateImportTemplate() {
+export async function generateImportTemplate() {
   const rows = [
     { '姓名': '张三', '性别': '男', '是否寄宿生': '是' },
     { '姓名': '李四', '性别': '女', '是否寄宿生': '否' },
@@ -91,7 +112,28 @@ export function generateImportTemplate() {
   ws['!cols'] = [{ wch: 10 }, { wch: 6 }, { wch: 10 }];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '导入模板');
-  XLSX.writeFile(wb, '学生导入模板.xlsx');
+
+  const fileName = '学生导入模板.xlsx';
+
+  if (navigator.share && navigator.canShare) {
+    const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+    const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const file = new File([blob], fileName, { type: blob.type });
+    if (navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: fileName });
+      return;
+    }
+  }
+
+  const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+  const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
 }
 
 function normalizeGender(val) {

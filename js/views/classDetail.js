@@ -158,14 +158,18 @@ export async function renderClassDetail(container, classId) {
         const result = await exportStudentsToExcel(classId, cls.name);
         showToast(`已导出 ${result.count} 名学生`);
       } catch (err) {
-        showToast('导出失败: ' + err.message, 'error');
+        if (err.name !== 'AbortError') showToast('导出失败: ' + err.message, 'error');
       }
     });
 
-    document.getElementById('btn-download-template').addEventListener('click', () => {
-      generateImportTemplate();
+    document.getElementById('btn-download-template').addEventListener('click', async () => {
       hideModal();
-      showToast('模板已下载');
+      try {
+        await generateImportTemplate();
+        showToast('模板已下载');
+      } catch (e) {
+        if (e.name !== 'AbortError') showToast('下载失败', 'error');
+      }
     });
   });
 }
