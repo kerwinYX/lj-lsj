@@ -1,0 +1,8 @@
+{
+  "appId": "com.kerwin.classmanager",
+  "appName": "班级管理助手",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
