@@ -1,6 +1,7 @@
 import { getClasses, createClass, updateClass, deleteClass, searchStudents } from '../dao.js';
 import { showModal, hideModal, showConfirm } from '../components/modal.js';
 import { navigate, setNavbar } from '../app.js';
+import { exportDB, importDB, saveToOPFS } from '../db.js';
 
 let debounceTimer = null;
 
@@ -8,7 +9,12 @@ export async function renderClassList(container) {
   setNavbar({
     title: '班级管理助手',
     showBack: false,
-    actions: '<button class="nav-btn" id="btn-tag-manage" title="标签管理">⚙</button>',
+    actions: `
+      <button class="nav-btn" id="btn-data-manage" title="数据管理" aria-label="数据管理">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+      <button class="nav-btn" id="btn-tag-manage" title="标签管理">⚙</button>
+    `,
   });
 
   const classes = await getClasses();
@@ -165,4 +171,122 @@ export async function renderClassList(container) {
       navigate('#/tags');
     });
   }
+
+  const btnDataManage = document.getElementById('btn-data-manage');
+  if (btnDataManage) {
+    btnDataManage.addEventListener('click', () => {
+      showModal({
+        title: '数据管理',
+        content: `
+          <div class="action-menu">
+            <button class="action-menu-item" id="btn-backup-export">
+              <span class="action-menu-icon">💾</span>
+              <div class="action-menu-text">
+                <strong>备份数据</strong>
+                <small>导出全部数据，可用于换手机后恢复</small>
+              </div>
+            </button>
+            <button class="action-menu-item" id="btn-backup-import">
+              <span class="action-menu-icon">📂</span>
+              <div class="action-menu-text">
+                <strong>恢复数据</strong>
+                <small>从备份文件恢复所有数据</small>
+              </div>
+            </button>
+          </div>
+          <p style="font-size:12px;color:var(--text-tertiary);text-align:center;margin-top:16px;line-height:1.5">
+            备份文件包含所有班级、学生、标签、谈话记录等完整数据
+          </p>
+        `,
+      });
+
+      document.getElementById('btn-backup-export').addEventListener('click', async () => {
+        hideModal();
+        try {
+          const data = exportDB();
+          const blob = new Blob([data], { type: 'application/octet-stream' });
+          const now = new Date();
+          const ts = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+          const fileName = `班级管理助手_备份_${ts}.db`;
+
+          if (navigator.share && navigator.canShare) {
+            const file = new File([blob], fileName, { type: 'application/octet-stream' });
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({ files: [file], title: '班级管理助手数据备份' });
+              showToast('备份完成');
+              return;
+            }
+          }
+
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+          showToast('备份文件已下载');
+        } catch (err) {
+          if (err.name !== 'AbortError') showToast('备份失败: ' + err.message, 'error');
+        }
+      });
+
+      document.getElementById('btn-backup-import').addEventListener('click', () => {
+        hideModal();
+        showModal({
+          title: '恢复数据',
+          content: `
+            <div class="import-area">
+              <div class="import-hint">
+                <p style="color:var(--danger);font-weight:600">⚠️ 恢复将覆盖当前所有数据</p>
+                <p>请选择之前导出的备份文件（.db）</p>
+              </div>
+              <label class="import-file-label">
+                <input type="file" id="backup-file-input" accept=".db" hidden>
+                <span class="btn btn-primary btn-block">选择备份文件</span>
+              </label>
+              <div id="backup-status" class="import-status hidden"></div>
+            </div>
+          `,
+        });
+
+        document.getElementById('backup-file-input').addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const statusEl = document.getElementById('backup-status');
+          statusEl.classList.remove('hidden');
+          statusEl.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0 auto"></div><p>正在恢复...</p>';
+
+          try {
+            const buf = await file.arrayBuffer();
+            await importDB(new Uint8Array(buf));
+            statusEl.innerHTML = '<div class="import-result import-result-success"><p>数据恢复成功！</p></div>';
+            setTimeout(() => {
+              hideModal();
+              location.reload();
+            }, 1200);
+          } catch (err) {
+            statusEl.innerHTML = `<div class="import-result import-result-error"><p>恢复失败: ${err.message}</p></div>`;
+          }
+        });
+      });
+    });
+  }
+}
+
+function showToast(msg, type = 'success') {
+  const existing = document.querySelector('.toast-msg');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.className = `toast-msg toast-${type}`;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
 }
