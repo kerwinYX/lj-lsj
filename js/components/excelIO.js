@@ -78,28 +78,10 @@ export async function exportStudentsToExcel(classId, className) {
   XLSX.utils.book_append_sheet(wb, ws, className || '学生信息');
 
   const fileName = `${className || '学生信息'}_${formatDate(new Date())}.xlsx`;
-
-  // Use Web Share API on mobile for better UX
-  if (navigator.share && navigator.canShare) {
-    const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
-    const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const file = new File([blob], fileName, { type: blob.type });
-    if (navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: fileName });
-      return { count: rows.length, fileName };
-    }
-  }
-
-  // Fallback: blob download
   const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
   const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = fileName;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+
+  await saveFileToDevice(blob, fileName);
   return { count: rows.length, fileName };
 }
 
@@ -114,26 +96,118 @@ export async function generateImportTemplate() {
   XLSX.utils.book_append_sheet(wb, ws, '导入模板');
 
   const fileName = '学生导入模板.xlsx';
+  const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+  const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-  if (navigator.share && navigator.canShare) {
-    const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
-    const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const file = new File([blob], fileName, { type: blob.type });
-    if (navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: fileName });
+  await saveFileToDevice(blob, fileName);
+}
+
+/**
+ * Mobile-friendly file save: tries Web Share API first (shows system share sheet
+ * where user can choose "Save to Files" etc.), falls back to showing a download
+ * dialog with explicit save button and guidance.
+ */
+export async function saveFileToDevice(blob, fileName) {
+  // 1. Try File System Access API (lets user pick save location directly)
+  if (window.showSaveFilePicker) {
+    try {
+      const ext = fileName.split('.').pop();
+      const types = ext === 'xlsx' ? [{
+        description: 'Excel 文件',
+        accept: { 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'] },
+      }] : [{
+        description: '数据文件',
+        accept: { 'application/octet-stream': [`.${ext}`] },
+      }];
+      const handle = await window.showSaveFilePicker({ suggestedName: fileName, types });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
       return;
+    } catch (err) {
+      if (err.name === 'AbortError') throw err;
     }
   }
 
-  const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
-  const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  // 2. Try Web Share API (shows system share sheet on mobile)
+  if (navigator.share && navigator.canShare) {
+    try {
+      const file = new File([blob], fileName, { type: blob.type });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: fileName });
+        return;
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') throw err;
+    }
+  }
+
+  // 3. Fallback: show a modal with explicit download action + guidance
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = fileName;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+  await showDownloadModal(url, fileName);
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+function showDownloadModal(url, fileName) {
+  return new Promise((resolve) => {
+    let overlay = document.getElementById('download-modal-overlay');
+    if (overlay) overlay.remove();
+
+    overlay = document.createElement('div');
+    overlay.id = 'download-modal-overlay';
+    overlay.className = 'modal-overlay';
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    const tip = isIOS
+      ? '点击下方按钮后，在浏览器弹出的菜单中选择「下载」或「存储到"文件"」'
+      : '点击下方按钮后，文件将保存到手机「下载」文件夹中';
+
+    overlay.innerHTML = `
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <h2 class="modal-title">保存文件</h2>
+        <div class="modal-body">
+          <div style="text-align:center;padding:1rem 0">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" style="margin-bottom:0.75rem">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <p style="font-size:0.95rem;color:var(--text-secondary);margin:0.5rem 0">${fileName}</p>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin:0.75rem 0">${tip}</p>
+            <a id="download-modal-btn" href="${url}" download="${fileName}" target="_blank" rel="noopener"
+               class="btn btn-primary btn-block" style="display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;margin-top:0.75rem;text-decoration:none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              保存文件
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const closeModal = () => {
+      overlay.classList.remove('active');
+      setTimeout(() => { overlay.remove(); resolve(); }, 300);
+    };
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    overlay.querySelector('#download-modal-btn').addEventListener('click', () => {
+      setTimeout(closeModal, 500);
+    });
+
+    requestAnimationFrame(() => overlay.classList.add('active'));
+  });
 }
 
 function normalizeGender(val) {

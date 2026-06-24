@@ -2,6 +2,7 @@ import { getClasses, createClass, updateClass, deleteClass, searchStudents } fro
 import { showModal, hideModal, showConfirm } from '../components/modal.js';
 import { navigate, setNavbar } from '../app.js';
 import { exportDB, importDB, saveToOPFS } from '../db.js';
+import { saveFileToDevice } from '../components/excelIO.js';
 
 let debounceTimer = null;
 
@@ -209,23 +210,8 @@ export async function renderClassList(container) {
           const ts = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
           const fileName = `班级管理助手_备份_${ts}.db`;
 
-          if (navigator.share && navigator.canShare) {
-            const file = new File([blob], fileName, { type: 'application/octet-stream' });
-            if (navigator.canShare({ files: [file] })) {
-              await navigator.share({ files: [file], title: '班级管理助手数据备份' });
-              showToast('备份完成');
-              return;
-            }
-          }
-
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
-          showToast('备份文件已下载');
+          await saveFileToDevice(blob, fileName);
+          showToast('备份完成');
         } catch (err) {
           if (err.name !== 'AbortError') showToast('备份失败: ' + err.message, 'error');
         }
