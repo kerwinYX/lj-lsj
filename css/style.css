@@ -1424,6 +1424,197 @@ select.form-input {
 }
 
 /* ========================================
+   Action Menu (more actions sheet)
+   ======================================== */
+.action-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.action-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background var(--transition-fast);
+}
+
+.action-menu-item:active {
+  background: var(--bg);
+}
+
+.action-menu-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--border-light);
+  border-radius: var(--radius-sm);
+}
+
+.action-menu-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.action-menu-text strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.action-menu-text small {
+  display: block;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* ========================================
+   Import Area
+   ======================================== */
+.import-area {
+  padding: 8px 0;
+}
+
+.import-hint {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.import-hint p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.import-hint-sub {
+  font-size: 12px !important;
+  color: var(--text-tertiary) !important;
+  margin-top: 4px;
+}
+
+.import-file-label {
+  display: block;
+  cursor: pointer;
+}
+
+.import-status {
+  margin-top: 16px;
+  text-align: center;
+  padding: 12px;
+}
+
+.import-status p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+.import-result {
+  padding: 16px;
+  border-radius: var(--radius-md);
+}
+
+.import-result-success {
+  background: var(--success-light);
+  color: #065F46;
+}
+
+.import-result-error {
+  background: var(--danger-light);
+  color: #991B1B;
+}
+
+.import-result p {
+  color: inherit !important;
+}
+
+/* ========================================
+   Toast
+   ======================================== */
+.toast-msg {
+  position: fixed;
+  bottom: calc(100px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+  max-width: 80vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toast-msg.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast-success {
+  background: var(--text);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-lg);
+}
+
+.toast-error {
+  background: var(--danger);
+  color: var(--text-inverse);
+  box-shadow: 0 4px 12px rgba(239,68,68,0.3);
+}
+
+/* ========================================
+   Swipe Back Indicator
+   ======================================== */
+.swipe-back-indicator {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(-44px) scale(0.6);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  opacity: 0;
+  z-index: 9999;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s, background 0.15s, color 0.15s;
+}
+
+.swipe-back-indicator.active {
+  transition: none;
+}
+
+.swipe-back-indicator.ready {
+  background: var(--primary);
+  color: var(--text-inverse);
+  box-shadow: 0 2px 16px rgba(99,102,241,0.4);
+}
+
+/* ========================================
    Safe Area Padding
    ======================================== */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {

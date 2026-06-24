@@ -93,6 +93,7 @@ CREATE INDEX IF NOT EXISTS idx_events_student ON timeline_events(student_id);
 
 const SEED_SQL = `
 INSERT OR IGNORE INTO tag_dimensions (id, name, color, sort) VALUES
+  ('dim_basic',    '基本信息', '#6366F1', 0),
   ('dim_learning', '学习能力', '#4A90D9', 1),
   ('dim_behavior', '行为习惯', '#52C41A', 2),
   ('dim_social',   '社交能力', '#FA8C16', 3),
@@ -100,6 +101,7 @@ INSERT OR IGNORE INTO tag_dimensions (id, name, color, sort) VALUES
   ('dim_talent',   '特长爱好', '#F5222D', 5);
 
 INSERT OR IGNORE INTO tags (id, dimension_id, label) VALUES
+  ('tag_boarding',      'dim_basic',    '寄宿生'),
   ('tag_math_strong',   'dim_learning', '数学优秀'),
   ('tag_math_weak',     'dim_learning', '数学薄弱'),
   ('tag_eng_strong',    'dim_learning', '英语优秀'),
@@ -157,6 +159,12 @@ function migrateDB() {
       _db.run("ALTER TABLE students ADD COLUMN gender TEXT");
     }
   } catch { /* table may not exist yet */ }
+
+  // Ensure "寄宿生" tag exists for import/export
+  try {
+    _db.run("INSERT OR IGNORE INTO tag_dimensions (id, name, color, sort) VALUES ('dim_basic', '基本信息', '#6366F1', 0)");
+    _db.run("INSERT OR IGNORE INTO tags (id, dimension_id, label) VALUES ('tag_boarding', 'dim_basic', '寄宿生')");
+  } catch { /* ignore */ }
 }
 
 async function initDB() {
